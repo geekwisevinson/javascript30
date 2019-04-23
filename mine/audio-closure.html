@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    const audioNames = ["buddy","dubstep","betterdays","sunny","energy","epic","tenderness","freedom","funnysong","onceagain","tomorrow","slowmotion"];
+
+    function createUrl(audioName) {
+        return `https://www.bensound.org/bensound-music/bensound-${audioName}.mp3`;
+    }
+
+    function createButtons(quantity) {
+        const buttons = [];
+        for (let i = 0; i < quantity; i++) {
+            buttons.push(document.createElement('button'));
+        }
+        return buttons;
+    }
+
+    function appendButtons(buttons) {
+        buttons.forEach( (button) => {
+            document.body.appendChild(button);
+        })
+    }
+
+    function addTextToButtons(buttons) {
+        buttons.forEach( (button, i) => {
+            button.innerText = `${i > 9 ? i : `0` + i}:${audioNames[i]}`
+        })
+    }
+
+    const buttons = createButtons(audioNames.length);
+    appendButtons(buttons);
+    addTextToButtons(buttons);
+
+
+    function addAlert(buttons) {
+
+
+        for( let i = 0; i < buttons.length; i++) {
+            buttons[i].addEventListener('click', creatClickHandler(i))
+        }
+    }
+
+    function creatClickHandler(i) {
+        return function clickHandler() {
+            alert(i);
+        }
+    }
+
+
+    addAlert(buttons)
+
+</script>
+</body>
+</html>

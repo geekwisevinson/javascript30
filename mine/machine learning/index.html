@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Konami Code</title>
+</head>
+<body>
+
+<script>
+    const pressed = [];
+    const secret = 'debug';
+    window.addEventListener('keyup', function(event) {
+        console.log(event.key);
+        pressed.push(event.key);
+        console.log('pressed-before', pressed);
+        console.log('secret.length', -secret.length - 1);
+        console.log('pressed.length', pressed.length -secret.length);
+        pressed.splice(-secret.length - 1, pressed.length - secret.length);
+        console.log('pressed', pressed);
+        if (pressed.join('').includes(secret)) {
+            alert('you did it!');
+        }
+    });
+</script>
+
+</body>
+</html>

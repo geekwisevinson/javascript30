@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        * * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+
+        }
+
+        .row {
+            display: flex;
+            margin-bottom: 1em;
+
+        }
+
+        .cell {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+
+        .face {
+            display: flex;
+            flex-wrap: wrap;
+            width: 300px;
+            height: 300px;
+            background-color: pink;
+        }
+
+        .square {
+            display: inline-block;
+            width: 100px;
+            height: 100px;
+            background-color: blue;
+            border: 1px solid black;
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="top-row row">
+    <div class="cell"></div>
+    <div class="cell">
+        <div>
+            <button><-</button>
+            top
+            <button>-></button>
+        </div>
+        <div class="face top">
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+        </div>
+    </div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+
+</div>
+
+
+<div class="middle-row row">
+    <div class="cell">
+        <div>
+            <button><-</button>
+            left
+            <button>-></button>
+        </div>
+        <div class="face left">
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+        </div>
+    </div>
+    <div class="cell">
+        <div>
+            <button><-</button>
+            front
+            <button>-></button>
+        </div>
+        <div class="face front">
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+        </div>
+    </div>
+    <div class="cell">
+        <div>
+            <button><-</button>
+            right
+            <button>-></button>
+        </div>
+        <div class="face right">
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+        </div>
+    </div>
+    <div class="cell">
+        <div>
+            <button><-</button>
+            back
+            <button>-></button>
+        </div>
+        <div class="face back">
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+        </div>
+    </div>
+</div>
+
+<div class="bottom-row row">
+    <div class="cell"></div>
+    <div class="cell">
+        <div>
+            <button><-</button>
+            bottom
+            <button>-></button>
+        </div>
+        <div class="face bottom">
+
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+            <div class="square"></div>
+        </div>
+    </div>
+    <div class="cell"></div>
+    <div class="cell temp"></div>
+</div>
+
+
+<script>
+    const sides = ['top', 'left', 'front', 'right', 'back', 'bottom'];
+    const colors = ['orange', 'green', 'white', 'blue', 'yellow', 'red'];
+
+    function getSide(side) {
+        return document.querySelector(`.${side}`);
+    }
+
+    function colorSquares(side, color) {
+        const sideSquares = getSide(side).querySelectorAll('.square');
+        sideSquares.forEach( (square, index) => {
+            square.style.backgroundColor = color;
+            square.innerText = index;
+        });
+    }
+
+    sides.forEach((side, index) => {
+        colorSquares(sides[index], colors[index]);
+    });
+
+    function getAssociated(side) {
+        const answer = {};
+        switch (side) {
+            case 'top':
+                answer.top = ['back', 'top'];
+                answer.left = ['left', 'top'];
+                answer.right = ['right', 'top'];
+                answer.bottom = ['front', 'top'];
+                break;
+            case 'front':
+                answer.top = ['top', 'bottom'];
+                answer.left = ['left', 'right'];
+                answer.right = ['right', 'left'];
+                answer.bottom = ['bottom', 'top'];
+                break;
+            case 'left':
+                answer.top = ['top', 'left'];
+                answer.left = ['back', 'right'];
+                answer.right = ['front', 'left'];
+                answer.bottom = ['bottom', 'left'];
+                break;
+            case 'right':
+                answer.top = ['top', 'right'];
+                answer.left = ['front', 'right'];
+                answer.right = ['back', 'left'];
+                answer.bottom = ['bottom', 'right'];
+                break;
+            case 'back':
+                answer.top = ['top', 'top'];
+                answer.left = ['right', 'right'];
+                answer.right = ['left', 'left'];
+                answer.bottom = ['bottom', 'bottom'];
+                break;
+            case 'bottom':
+                answer.top = ['front', 'bottom'];
+                answer.left = ['left', 'bottom'];
+                answer.right = ['right', 'bottom'];
+                answer.bottom = ['back', 'bottom'];
+                break;
+        }
+
+        return answer;
+    }
+
+    function addButtonListeners() {
+        sides.forEach(side => {
+            const buttons = document.querySelector(`.${side}`).parentNode.querySelectorAll('button');
+            console.log('buttons', buttons);
+            buttons.forEach((button, index) => {
+                button.addEventListener('click', index ? clockwise(side) : counterClock(side))
+            })
+        });
+    }
+
+    addButtonListeners();
+    const temp = document.querySelector('.temp');
+    const source = {
+        left: [0, 3, 6],
+        top: [0, 1, 2],
+        right: [2, 5, 8],
+        bottom: [6, 7, 8],
+    };
+
+
+    function clockwise(side) {
+        const association = getAssociated(side);
+        return function () {
+            const tops = getSideMap(association, 'top');
+            const lefts = getSideMap(association, 'left');
+            const rights = getSideMap(association, 'right');
+            const bottoms = getSideMap(association, 'bottom');
+            tops.forEach( top => {
+                temp.appendChild(top);
+            });
+            lefts.forEach( left => {
+                temp.appendChild(left);
+            });
+            rights.forEach(right => {
+                temp.appendChild(right);
+            });
+            bottoms.forEach( bottom => {
+                temp.appendChild(bottom);
+            });
+            const me = document.querySelector(`.${side}`);
+            const myRight = document.querySelector('.' +association.right[0]);
+            const myLeft = document.querySelector('.' +association.left[0]);
+            const myTop = document.querySelector('.' +association.top[0]);
+            const myBottom = document.querySelector('.' +association.bottom[0]);
+            rights.reverse();
+            tops.reverse();
+            tops.forEach( (el, index) => {
+                myRight.insertBefore(el, myRight.children[source[association.right[1]][index]]);
+            });
+            rights.forEach( (el, index) => {
+                myBottom.insertBefore(el, myBottom.children[source[association.bottom[1]][index]]);
+            });
+            bottoms.forEach( (el, index) => {
+                myLeft.insertBefore(el, myLeft.children[source[association.left[1]][index]]);
+            });
+            lefts.forEach( (el, index) => {
+                myTop.insertBefore(el, myTop.children[source[association.top[1]][index]]);
+            });
+            const mySquares = me.querySelectorAll('.square');
+            mySquares.forEach( square => {
+                temp.appendChild(square);
+            });
+            me.appendChild(mySquares[2]);
+            me.prepend(mySquares[5]);
+            me.prepend(mySquares[8]);
+            me.prepend(mySquares[1]);
+            me.prepend(mySquares[4]);
+            me.prepend(mySquares[7]);
+            me.prepend(mySquares[0]);
+            me.prepend(mySquares[3]);
+            me.prepend(mySquares[6])
+
+        }
+    }
+
+    function getSideMap(association, side) {
+        const face = document.querySelector(`.${association[side][0]}`);
+        return source[association[side][1]].map(index => {
+            return face.querySelectorAll('.square')[index]
+        });
+    }
+
+    function counterClock(side) {
+        const association = getAssociated(side);
+        return function () {
+            const tops = getSideMap(association, 'top');
+            const lefts = getSideMap(association, 'left');
+            console.log('lefts', lefts);
+            const rights = getSideMap(association, 'right');
+            console.log('rights', rights);
+            const bottoms = getSideMap(association, 'bottom');
+
+            rights.reverse();
+            bottoms.reverse();
+
+            tops.forEach( top => {
+                temp.appendChild(top);
+            });
+            lefts.forEach( left => {
+                temp.appendChild(left);
+            });
+            rights.forEach(right => {
+                temp.appendChild(right);
+            });
+            bottoms.forEach( bottom => {
+                temp.appendChild(bottom);
+            });
+            const me = document.querySelector(`.${side}`);
+            const myRight = document.querySelector('.' +association.right[0]);
+            const myLeft = document.querySelector('.' +association.left[0]);
+            const myTop = document.querySelector('.' +association.top[0]);
+            const myBottom = document.querySelector('.' +association.bottom[0]);
+            tops.forEach( (el, index) => {
+                myLeft.insertBefore(el, myLeft.children[source[association.left[1]][index]]);
+            });
+            rights.forEach( (el, index) => {
+                myTop.insertBefore(el, myTop.children[source[association.top[1]][index]]);
+            });
+            bottoms.forEach( (el, index) => {
+                myRight.insertBefore(el, myRight.children[source[association.right[1]][index]]);
+            });
+            lefts.forEach( (el, index) => {
+                myBottom.insertBefore(el, myBottom.children[source[association.bottom[1]][index]]);
+            });
+            const mySquares = me.querySelectorAll('.square');
+            mySquares.forEach( square => {
+                temp.appendChild(square);
+            });
+            me.appendChild(mySquares[6]);
+            me.prepend(mySquares[3]);
+            me.prepend(mySquares[0]);
+            me.prepend(mySquares[7]);
+            me.prepend(mySquares[4]);
+            me.prepend(mySquares[1]);
+            me.prepend(mySquares[8]);
+            me.prepend(mySquares[5]);
+            me.prepend(mySquares[2])
+        }
+    }
+
+
+</script>
+
+</body>
+</html>
