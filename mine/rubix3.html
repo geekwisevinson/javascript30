@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Rubix 3</title>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        * {
+            line-height: 0;
+        }
+
+        .container {
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 300px;
+            left: 800px;
+            border: none;
+            backface-visibility: visible;
+            transform-origin: center;
+            transform-style: preserve-3d;
+            /*transform: rotateY(25deg) ;*/
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            backface-visibility: visible;
+            transform-origin: 50px 50px 100px;
+            transform-style: preserve-3d;
+            /*transform: rotateY(10deg) ;*/
+        }
+
+        .face {
+            display: block;
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            border: none;
+            line-height: 100px;
+            font-family: sans-serif;
+            font-size: 60px;
+            color: white;
+            text-align: center;
+        }
+
+
+        .cube.is-spinning {
+            animation: spinCube 8s infinite ease-in-out;
+        }
+
+        @keyframes spinCube {
+            0% {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+            100% {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+
+   
+
+<script>
+    class Cube {
+        container = null;
+        cube = null;
+        front = null;
+        back = null;
+        right = null;
+        left = null;
+        top = null;
+        bottom = null;
+        xOrigin = 0;
+        yOrigin = 0;
+        height = 100;
+        correctionY = 0;
+
+
+        styles = {
+            front: {
+                background: `rgba(0, 0, 0, 0.7)`,
+                transform: `translateZ(50px)`,
+            },
+            back: {
+                background: `rgba(0, 255, 0, 0.7)`,
+                color: `black`,
+                transform: `rotateY(180deg) translateZ(-50px)`
+            },
+            right: {
+                background: `rgba(196, 0, 0, 0.7)`,
+                transform: `rotateY(90deg) translateZ(50px)`
+            },
+            left: {
+                background: `rgba(0, 0, 196, 0.7)`,
+                transform: `rotateY(-90deg) translateZ(50px)`
+            },
+            top: {
+                background: `rgba(196, 196, 0, 0.7)`,
+                transform: `rotateX(90deg) translateZ(50px)`
+            },
+            bottom: {
+                background: `rgba(196, 0, 196, 0.7)`,
+                transform: `rotateX(-90deg) translateZ(50px)`
+            }
+        };
+
+        constructor() {
+            this.container = this.createEl('container');
+            this.cube = this.createEl('cube', ['pers250']);
+            this.front = this.createEl('face', ['front']);
+            this.front.innerText = '1';
+            this.back = this.createEl('face', ['back']);
+            this.back.innerText = '2';
+            this.right = this.createEl('face', ['right']);
+            this.right.innerText = '3';
+            this.left = this.createEl('face', ['left']);
+            this.left.innerText = '4';
+            this.top = this.createEl('face', ['top']);
+            this.top.innerText = '5';
+            this.bottom = this.createEl('face', ['bottom']);
+            this.bottom.innerText = '6';
+            this.append()
+        }
+
+        createEl(type, classes) {
+            const el = document.createElement('div');
+            el.classList.add(type);
+            if (classes) {
+                classes.forEach(item => {
+                    el.classList.add(item);
+                });
+            }
+
+            return el;
+        }
+
+        append() {
+            document.body.appendChild(this.container);
+            this.container.appendChild(this.cube);
+            this.cube.appendChild(this.front);
+            this.cube.appendChild(this.back);
+            this.cube.appendChild(this.right);
+            this.cube.appendChild(this.left);
+            this.cube.appendChild(this.top);
+            this.cube.appendChild(this.bottom);
+        }
+
+        draw() {
+            const keys = Object.keys(this.styles);
+            keys.forEach(key => {
+                const rules = Object.keys(this.styles[key]);
+                rules.forEach(rule => {
+                    this[key].style[rule] = this.styles[key][rule];
+                })
+            });
+            console.log('drY', this.correctionY)
+            this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg) translateY(${this.correctionY}px)`
+        }
+
+        spin() {
+            this.xOrigin++;
+            this.yOrigin++;
+            if (this.xOrigin < 0) {
+                this.xOrigin = 359;
+            }
+            if (this.yOrigin < 0) {
+                this.yOrigin = 359;
+            }
+            if (this.xOrigin > 359) {
+                this.xOrigin = 0;
+            }
+            if (this.yOrigin > 359) {
+                this.yOrigin = 0;
+            }
+            console.log('spin', this.xOrigin, this.yOrigin);
+            this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg)`
+        }
+
+        rotateX(value) {
+            this.xOrigin += value;
+            if (this.xOrigin < 0) {
+                this.xOrigin = 359;
+            }
+            if (this.xOrigin > 359) {
+                this.xOrigin = 0;
+            }
+            const abstract = this.getDistanceFromLoop(360, this.xOrigin);
+
+        }
+
+        getDistanceFromLoop(loopLength, current) {
+            let answer = current;
+            const middle = Math.floor(loopLength / 2);
+            if (current > middle) {
+                answer = loopLength - current
+            }
+            return answer;
+        }
+
+        percentage(total, current)
+        {
+            return Math.floor((current / total) * 100);
+        }
+
+        adjustCorrection(value) {
+            this.correctionY += value;
+        }
+
+        correctY(x, y) {
+            this.correctionY = this.percentage(360, x) * 4;
+            console.log('this.correctionY', this.correctionY)
+        }
+    }
+
+    const cube = new Cube();
+    cube.draw();
+    function gameLoop() {
+        cube.draw();
+        window.requestAnimationFrame(gameLoop);
+    }
+    gameLoop();
+    cube.append();
+    window.addEventListener('keydown', function (e) {
+        console.log('arrow',  e.code);
+
+        if (e.code === 'ArrowUp') {
+            cube.rotateX(1);
+        }
+        if (e.code === 'ArrowDown') {
+            cube.rotateX(-1);
+        }
+        if (e.code === 'ArrowLeft') {
+            cube.adjustCorrection(-1)
+        }
+        if (e.code === 'ArrowRight') {
+            cube.adjustCorrection(1)
+        }
+    })
+</script>
+</body>
+</html>
