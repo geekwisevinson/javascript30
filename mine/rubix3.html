@@ -24,7 +24,7 @@
             backface-visibility: visible;
             transform-origin: center;
             transform-style: preserve-3d;
-            /*transform: rotateY(25deg) ;*/
+            transform: rotateY(10deg) ;
             background: rgba(0, 0, 0, 0.7);
         }
 
@@ -68,8 +68,10 @@
 <body>
 
    
+<script src="xyMap.js"></script>
 
 <script>
+    const pressMap = {};
     class Cube {
         container = null;
         cube = null;
@@ -83,6 +85,13 @@
         yOrigin = 0;
         height = 100;
         correctionY = 0;
+        correctionX = 0;
+        correctionZ = 100;
+        angles = [0, 90, 180, 270];
+        angle = 0;
+        x = 0;
+        y = 0;
+        z = 0;
 
 
         styles = {
@@ -93,7 +102,7 @@
             back: {
                 background: `rgba(0, 255, 0, 0.7)`,
                 color: `black`,
-                transform: `rotateY(180deg) translateZ(-50px)`
+                transform: `rotateY(180deg) translateZ(50px)`
             },
             right: {
                 background: `rgba(196, 0, 0, 0.7)`,
@@ -162,8 +171,9 @@
                     this[key].style[rule] = this.styles[key][rule];
                 })
             });
-            console.log('drY', this.correctionY)
-            this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg) translateY(${this.correctionY}px)`
+            this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg) translateY(${this.correctionY}px) translateX(${this.correctionX}px) translateZ(${this.correctionZ}px)`;
+            console.log('x', this.x)
+            this.container.style.transform = `translateX(${this.x}px) translateY(${this.y}px) translateZ(${this.z}px)`;
         }
 
         spin() {
@@ -181,7 +191,6 @@
             if (this.yOrigin > 359) {
                 this.yOrigin = 0;
             }
-            console.log('spin', this.xOrigin, this.yOrigin);
             this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg)`
         }
 
@@ -194,6 +203,20 @@
                 this.xOrigin = 0;
             }
             const abstract = this.getDistanceFromLoop(360, this.xOrigin);
+            this.correctY(this.xOrigin, this.yOrigin);
+
+        }
+
+        rotateY(value) {
+            this.yOrigin += value;
+            if (this.yOrigin < 0) {
+                this.yOrigin = 359;
+            }
+            if (this.yOrigin > 359) {
+                this.yOrigin = 0;
+            }
+            const abstract = this.getDistanceFromLoop(360, this.xOrigin);
+            this.correctY(this.xOrigin, this.yOrigin);
 
         }
 
@@ -206,8 +229,7 @@
             return answer;
         }
 
-        percentage(total, current)
-        {
+        percentage(total, current) {
             return Math.floor((current / total) * 100);
         }
 
@@ -216,34 +238,71 @@
         }
 
         correctY(x, y) {
-            this.correctionY = this.percentage(360, x) * 4;
-            console.log('this.correctionY', this.correctionY)
+            console.log('map', xyMap);
+            console.log('correction', this.xOrigin, this.yOrigin, this.correctionX, this.correctionY);
+            // if (xyMap[this.xOrigin]) {
+            //     this.correctionZ = xyMap[this.xOrigin].z;
+            //     console.log('changed to', xyMap[this.xOrigin].z)
+            // }
+            console.log('correction2', this.xOrigin, this.yOrigin, this.correctionX, this.correctionY);
+        }
+
+        update() {
+
         }
     }
 
     const cube = new Cube();
     cube.draw();
+
     function gameLoop() {
         cube.draw();
         window.requestAnimationFrame(gameLoop);
     }
+
     gameLoop();
     cube.append();
     window.addEventListener('keydown', function (e) {
-        console.log('arrow',  e.code);
-
+        pressMap[e.code] = true;
+        console.log('e.code', e.code)
         if (e.code === 'ArrowUp') {
             cube.rotateX(1);
+
         }
         if (e.code === 'ArrowDown') {
             cube.rotateX(-1);
         }
         if (e.code === 'ArrowLeft') {
-            cube.adjustCorrection(-1)
+            cube.rotateY(1)
         }
         if (e.code === 'ArrowRight') {
-            cube.adjustCorrection(1)
+            cube.rotateY(-1)
         }
+        if (e.code === 'Space') {
+            cube.angle = cube.angles[cube.angles.indexOf(cube.angle) + 1];
+            if (!cube.angles) {
+                cube.angle = 0;
+            }
+        }
+        if (e.code === 'KeyD') {
+            console.log('change');
+            cube.x++;
+        }
+        if (e.code === 'KeyA') {
+            console.log('change');
+            cube.x--;
+        }
+        if (e.code === 'KeyW') {
+            console.log('change');
+            cube.y--;
+        }
+        if (e.code === 'KeyS') {
+            console.log('change');
+            cube.y++;
+        }
+    });
+    window.addEventListener('keyup', function (e) {
+        pressMap[e.code] = false;
     })
 </script>
 </body>

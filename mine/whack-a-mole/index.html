@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html, body {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    setInterval(function() {
+        const mole = document.createElement('div');
+        mole.innerText = 'mole';
+        mole.style.position = 'absolute';
+        mole.style.left = Math.floor(Math.random() * document.body.clientWidth) + 'px';
+        mole.style.top =  Math.floor(Math.random() * document.body.clientHeight) + 'px';
+        console.log('moletop', mole.style.top)
+        document.body.appendChild(mole);
+        setTimeout(function() {
+            mole.remove();
+        }, 500);
+    }, 1000)
+</script>
+
+</body>
+</html>
