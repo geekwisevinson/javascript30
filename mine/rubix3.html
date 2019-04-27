@@ -8,6 +8,12 @@
         body {
             margin: 0;
             padding: 0;
+            backface-visibility: visible;
+            transform-origin: center;
+            transform-style: preserve-3d;
+            /*perspective: 1000em;*/
+            /*transform: rotateX(90deg) ;*/
+            /*if you turn on the transform move the object down with k for z--*/
         }
 
         * {
@@ -24,7 +30,7 @@
             backface-visibility: visible;
             transform-origin: center;
             transform-style: preserve-3d;
-            transform: rotateY(10deg) ;
+            /*transform: rotateY(90deg) ;*/
             background: rgba(0, 0, 0, 0.7);
         }
 
@@ -92,6 +98,10 @@
         x = 0;
         y = 0;
         z = 0;
+
+        xWeight = 1;
+        yWeight = 0;
+        zWeight = 0;
 
 
         styles = {
@@ -172,9 +182,46 @@
                 })
             });
             this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg) translateY(${this.correctionY}px) translateX(${this.correctionX}px) translateZ(${this.correctionZ}px)`;
-            console.log('x', this.x)
-            this.container.style.transform = `translateX(${this.x}px) translateY(${this.y}px) translateZ(${this.z}px)`;
+            this.container.style.transform = `translateX(${this.x}px) translateY(${this.y}px) translateZ(${this.z}px) `;
         }
+
+        moveX(speed) {
+            const reverse = this.yOrigin > 90 && this.yOrigin < 270;
+            let per = this.findPerRotate(this.yOrigin);
+            console.log('per', per);
+            this.x += (speed * per) * (reverse ? -1 : 1);
+        }
+        moveY(speed) {
+            const reverse = this.xOrigin > 90 && this.xOrigin < 270;
+            let per = this.findPerRotate(this.xOrigin);
+            console.log('per', per);
+            this.y += (speed * per) * (reverse ? -1 : 1);
+        }
+
+        findPerRotate(value) {
+            let per = value;
+
+            if (per > 180 - 1) {
+                per = per - 180;
+                if (per > 90 - 1) {
+                    per = per - 90;
+                } else {
+                    per = 90 - per;
+                }
+            } else {
+                if (per > 90 - 1) {
+                    per = per - 90;
+                } else {
+                    per = 90 - per;
+                }
+            }
+            console.log('per set 2', per);
+            per = this.percentage(90, per);
+            console.log('per set 3', per);
+            console.log('value', value);
+            return per / 100;
+        }
+
 
         spin() {
             this.xOrigin++;
@@ -238,13 +285,12 @@
         }
 
         correctY(x, y) {
-            console.log('map', xyMap);
-            console.log('correction', this.xOrigin, this.yOrigin, this.correctionX, this.correctionY);
+            // console.log('correction', this.xOrigin, this.yOrigin, this.correctionX, this.correctionY);
             // if (xyMap[this.xOrigin]) {
             //     this.correctionZ = xyMap[this.xOrigin].z;
             //     console.log('changed to', xyMap[this.xOrigin].z)
             // }
-            console.log('correction2', this.xOrigin, this.yOrigin, this.correctionX, this.correctionY);
+            // console.log('correction2', this.xOrigin, this.yOrigin, this.correctionX, this.correctionY);
         }
 
         update() {
@@ -253,7 +299,9 @@
     }
 
     const cube = new Cube();
+    const cube2 = new Cube();
     cube.draw();
+    cube2.draw();
 
     function gameLoop() {
         cube.draw();
@@ -286,19 +334,28 @@
         }
         if (e.code === 'KeyD') {
             console.log('change');
-            cube.x++;
+            cube.moveX(10);
         }
         if (e.code === 'KeyA') {
             console.log('change');
-            cube.x--;
+            cube.moveX(-10);
         }
         if (e.code === 'KeyW') {
             console.log('change');
-            cube.y--;
+            cube.moveY(-10);
         }
         if (e.code === 'KeyS') {
             console.log('change');
-            cube.y++;
+            cube.moveY(10);
+        }
+
+        if (e.code === 'KeyJ') {
+            console.log('change');
+            cube.z++;
+        }
+        if (e.code === 'KeyK') {
+            console.log('change');
+            cube.z--;
         }
     });
     window.addEventListener('keyup', function (e) {
