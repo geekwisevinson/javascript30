@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Monopoly Cards</title>
+    <style>
+
+    </style>
+</head>
+<body>
+
+<script>
+    class Card{
+        element = null;
+        letter = null;
+        description = null;
+        letterText = 'A';
+        descriptionText = 'Because';
+        constructor(type, z) {
+            this.letterText = type;
+            this.element = document.createElement('div');
+            document.body.appendChild(this.element);
+            this.letter = document.createElement('div');
+            this.description = document.createElement('div');
+            this.element.appendChild(this.letter);
+            this.element.appendChild(this.description);
+            this.element.z = z;
+            this.draw();
+            this.element.addEventListener('click', function () {
+                console.log('letter', this.innerText)
+            })
+        }
+
+        draw() {
+            const style = this.element.style;
+            style.display = 'grid';
+            style.position = 'absolute';
+            style.left = '50%';
+            style.top = '50%';
+            style.width = '100px';
+            style.height = '100px';
+            style.backgroundColor = 'red';
+            style['grid-template-columns'] = '1fr';
+            style['grid-template-rows'] = '1fr 1fr 1fr';
+            console.log('this.element', this.element.z)
+            style['z-index'] = (3 - this.element.z) + '';
+            this.letter.innerText = this.letterText;
+            this.description.innerText = this.descriptionText;
+        }
+    }
+
+    const types = ['A', 'B', 'C', 'D'];
+    function createDeck() {
+        types.forEach( (type, z) => {
+            new Card(type, z)
+        });
+    }
+    createDeck();
+</script>
+</body>
+</html>
