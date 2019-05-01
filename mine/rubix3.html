@@ -8,6 +8,12 @@
         body {
             margin: 0;
             padding: 0;
+            backface-visibility: visible;
+            transform-origin: center;
+            transform-style: preserve-3d;
+            /*perspective: 1000em;*/
+            /*transform: rotateX(90deg) ;*/
+            /*if you turn on the transform move the object down with k for z--*/
         }
 
         * {
@@ -69,8 +75,10 @@
 <body>
 
    
+<script src="xyMap.js"></script>
 
 <script>
+    const pressMap = {};
     class Cube {
         container = null;
         cube = null;
@@ -84,6 +92,17 @@
         yOrigin = 0;
         height = 100;
         correctionY = 0;
+        correctionX = 0;
+        correctionZ = 100;
+        angles = [0, 90, 180, 270];
+        angle = 0;
+        x = 0;
+        y = 0;
+        z = 0;
+
+        xWeight = 1;
+        yWeight = 0;
+        zWeight = 0;
 
 
         styles = {
@@ -94,7 +113,7 @@
             back: {
                 background: `rgba(0, 255, 0, 0.7)`,
                 color: `black`,
-                transform: `rotateY(180deg) translateZ(-50px)`
+                transform: `rotateY(180deg) translateZ(50px)`
             },
             right: {
                 background: `rgba(196, 0, 0, 0.7)`,
@@ -163,9 +182,47 @@
                     this[key].style[rule] = this.styles[key][rule];
                 })
             });
-            console.log('drY', this.correctionY)
-            this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg) translateY(${this.correctionY}px)`
+            this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg) translateY(${this.correctionY}px) translateX(${this.correctionX}px) translateZ(${this.correctionZ}px)`;
+            this.container.style.transform = `translateX(${this.x}px) translateY(${this.y}px) translateZ(${this.z}px) `;
         }
+
+        moveX(speed) {
+            const reverse = this.yOrigin > 90 && this.yOrigin < 270;
+            let per = this.findPerRotate(this.yOrigin);
+            console.log('per', per);
+            this.x += (speed * per) * (reverse ? -1 : 1);
+        }
+        moveY(speed) {
+            const reverse = this.xOrigin > 90 && this.xOrigin < 270;
+            let per = this.findPerRotate(this.xOrigin);
+            console.log('per', per);
+            this.y += (speed * per) * (reverse ? -1 : 1);
+        }
+
+        findPerRotate(value) {
+            let per = value;
+
+            if (per > 180 - 1) {
+                per = per - 180;
+                if (per > 90 - 1) {
+                    per = per - 90;
+                } else {
+                    per = 90 - per;
+                }
+            } else {
+                if (per > 90 - 1) {
+                    per = per - 90;
+                } else {
+                    per = 90 - per;
+                }
+            }
+            console.log('per set 2', per);
+            per = this.percentage(90, per);
+            console.log('per set 3', per);
+            console.log('value', value);
+            return per / 100;
+        }
+
 
         spin() {
             this.xOrigin++;
@@ -182,7 +239,6 @@
             if (this.yOrigin > 359) {
                 this.yOrigin = 0;
             }
-            console.log('spin', this.xOrigin, this.yOrigin);
             this.cube.style.transform = `rotateX(${this.xOrigin}deg) rotateY(${this.yOrigin}deg)`
         }
 
@@ -195,6 +251,20 @@
                 this.xOrigin = 0;
             }
             const abstract = this.getDistanceFromLoop(360, this.xOrigin);
+            this.correctY(this.xOrigin, this.yOrigin);
+
+        }
+
+        rotateY(value) {
+            this.yOrigin += value;
+            if (this.yOrigin < 0) {
+                this.yOrigin = 359;
+            }
+            if (this.yOrigin > 359) {
+                this.yOrigin = 0;
+            }
+            const abstract = this.getDistanceFromLoop(360, this.xOrigin);
+            this.correctY(this.xOrigin, this.yOrigin);
 
         }
 
@@ -207,8 +277,7 @@
             return answer;
         }
 
-        percentage(total, current)
-        {
+        percentage(total, current) {
             return Math.floor((current / total) * 100);
         }
 
@@ -217,34 +286,81 @@
         }
 
         correctY(x, y) {
-            this.correctionY = this.percentage(360, x) * 4;
-            console.log('this.correctionY', this.correctionY)
+            // console.log('correction', this.xOrigin, this.yOrigin, this.correctionX, this.correctionY);
+            // if (xyMap[this.xOrigin]) {
+            //     this.correctionZ = xyMap[this.xOrigin].z;
+            //     console.log('changed to', xyMap[this.xOrigin].z)
+            // }
+            // console.log('correction2', this.xOrigin, this.yOrigin, this.correctionX, this.correctionY);
+        }
+
+        update() {
+
         }
     }
 
     const cube = new Cube();
+    const cube2 = new Cube();
     cube.draw();
+    cube2.draw();
+
     function gameLoop() {
         cube.draw();
         window.requestAnimationFrame(gameLoop);
     }
+
     gameLoop();
     cube.append();
     window.addEventListener('keydown', function (e) {
-        console.log('arrow',  e.code);
-
+        pressMap[e.code] = true;
+        console.log('e.code', e.code)
         if (e.code === 'ArrowUp') {
             cube.rotateX(1);
+
         }
         if (e.code === 'ArrowDown') {
             cube.rotateX(-1);
         }
         if (e.code === 'ArrowLeft') {
-            cube.adjustCorrection(-1)
+            cube.rotateY(1)
         }
         if (e.code === 'ArrowRight') {
-            cube.adjustCorrection(1)
+            cube.rotateY(-1)
         }
+        if (e.code === 'Space') {
+            cube.angle = cube.angles[cube.angles.indexOf(cube.angle) + 1];
+            if (!cube.angles) {
+                cube.angle = 0;
+            }
+        }
+        if (e.code === 'KeyD') {
+            console.log('change');
+            cube.moveX(10);
+        }
+        if (e.code === 'KeyA') {
+            console.log('change');
+            cube.moveX(-10);
+        }
+        if (e.code === 'KeyW') {
+            console.log('change');
+            cube.moveY(-10);
+        }
+        if (e.code === 'KeyS') {
+            console.log('change');
+            cube.moveY(10);
+        }
+
+        if (e.code === 'KeyJ') {
+            console.log('change');
+            cube.z++;
+        }
+        if (e.code === 'KeyK') {
+            console.log('change');
+            cube.z--;
+        }
+    });
+    window.addEventListener('keyup', function (e) {
+        pressMap[e.code] = false;
     })
 </script>
 </body>
