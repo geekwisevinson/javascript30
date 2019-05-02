@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        :root {
+            --x: 0px;
+            --y: 0px;
+        }
+        .card {
+            width: 100px;
+            height: 200px;
+            border: 1px solid black;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            top: 0;
+            left: 0;
+        }
+
+        [type=money] {
+            background: green;
+        }
+        [type=action] {
+            background: blue;
+        }
+        [type=rent] {
+            background: yellow;
+        }
+        [type=property] {
+            background: orange;
+        }
+        [type=propertyWild] {
+            background: darkred;
+        }
+        [deck=origin] {
+            top: 200px;
+            left: 200px;
+        }
+        [holding=true] {
+            top: var(--y)px;
+            left: var(--x)px
+        }
+    </style>
+</head>
+<body>
+    <script src="script.js"></script>
+</body>
+</html>

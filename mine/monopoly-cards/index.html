@@ -4,58 +4,219 @@
     <meta charset="UTF-8">
     <title>Monopoly Cards</title>
     <style>
+        :root {
+            --x: 400px;
+            --y: 0px;
+            --index: 0;
+        }
 
+        div {
+            background: yellow;
+        }
+        .mover {
+            left: var(--x);
+            top: var(--y);
+            transition: all 1s ease;
+            background: yellow;
+        }
+
+        .draw-pile {
+            left: 500px;
+            top: 500px;
+        }
+        .selected-card {
+            left: var(--x);
+            top: var(--y);
+            background: lime;
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
 
 <script>
-    class Card{
-        element = null;
-        letter = null;
-        description = null;
-        letterText = 'A';
-        descriptionText = 'Because';
-        constructor(type, z) {
-            this.letterText = type;
-            this.element = document.createElement('div');
-            document.body.appendChild(this.element);
-            this.letter = document.createElement('div');
-            this.description = document.createElement('div');
-            this.element.appendChild(this.letter);
-            this.element.appendChild(this.description);
-            this.element.z = z;
-            this.draw();
-            this.element.addEventListener('click', function () {
-                console.log('letter', this.innerText)
-            })
-        }
+    const moneyCards = [
+        [6, '1M'],
+        [5, '2M'],
+        [3, '3M'],
+        [3, '4M'],
+        [2, '5M'],
+        [1, '10M']
+    ];
+    const actionCards = [
+        [2, 'Deal Breakers'],
+        [3, 'Just Say No'],
+        [10, 'Pass Go'],
+        [3, 'Forced Deal'],
+        [3, 'Sly Deal'],
+        [3, 'Debt Collector'],
+        [3, 'It\'s My Birthday'],
+        [2, 'Double Rent'],
+        [3, 'Houses'],
+        [2, 'Hotels'],
+    ];
+    const rentCards = [
+        [2, 'Dark Blue/Green'],
+        [2, 'Red/Yellow'],
+        [2, 'Pink/Orange'],
+        [2, 'Light Blue/Brown'],
+        [2, 'Railroad/Utility'],
+        [3, 'Wild Rent']
+    ];
+    const propertyCards = [
+        [2, 'Dark Blue'],
+        [2, 'Brown'],
+        [2, 'Utility'],
+        [3, 'Green'],
+        [3, 'Yellow'],
+        [3, 'Red'],
+        [3, 'Orange'],
+        [3, 'Pink'],
+        [3, 'Light Blue'],
+        [4, 'Railroad'],
+    ];
+    const propertyWildCards = [
+        [1, 'Dark Blue/Green'],
+        [1, 'Green/Railroad'],
+        [1, 'Utility/Railroad'],
+        [1, 'Light Blue/Railroad'],
+        [1, 'Light Blue/Brown'],
+        [2, 'Pink/Orange'],
+        [2, 'Red/Yellow'],
+        [2, 'Multi-Color']
+    ];
 
-        draw() {
-            const style = this.element.style;
-            style.display = 'grid';
-            style.position = 'absolute';
-            style.left = '50%';
-            style.top = '50%';
-            style.width = '100px';
-            style.height = '100px';
-            style.backgroundColor = 'red';
-            style['grid-template-columns'] = '1fr';
-            style['grid-template-rows'] = '1fr 1fr 1fr';
-            console.log('this.element', this.element.z)
-            style['z-index'] = (3 - this.element.z) + '';
-            this.letter.innerText = this.letterText;
-            this.description.innerText = this.descriptionText;
-        }
-    }
+    let selectedCard = null;
 
-    const types = ['A', 'B', 'C', 'D'];
     function createDeck() {
-        types.forEach( (type, z) => {
-            new Card(type, z)
+        const cards = moneyCards.concat(actionCards, rentCards, propertyCards, propertyWildCards);
+        const answer = cards.map(cardConfig => {
+            const tempCards = [];
+            for (let i = 0; i < cardConfig[0]; i++) {
+                tempCards.push({type: cardConfig[1]})
+            }
+            return tempCards;
         });
+        return answer.flat();
     }
-    createDeck();
+
+    const allCards = createDeck();
+    const cardElements = allCards.map(card => {
+        return document.createElement('div');
+    });
+    cardElements.forEach((el, index) => {
+        el.setAttribute('myIndex', index);
+        el['innerText'] = allCards[el.getAttribute('myIndex')].type;
+        document.body.appendChild(el);
+        el.style.position = 'absolute';
+        el.style.border = '1px solid black';
+        el.style.width = '150px';
+        el.style.height = '250px';
+        el.style.display = 'flex';
+        el.style.justifyContent = 'center';
+        const px = ['200px', '500px', '300px'];
+        el.addEventListener('click', function () {
+            // this.classList.add('draw-pile');
+            // getStyle('.draw-pile').style.left = px[Math.floor(Math.random() * px.length)];
+            // getSheet().insertRule(`.have-border { top: 100px; left: 100px; }`, getStyles().length);
+            // this.classList.add('have-border');
+            // console.dir( this)
+
+            if (!selectedCard) {
+                selectedCard = this;
+                console.log('selectedCard', selectedCard);
+                this.classList.add('selected-card')
+            }
+
+        });
+
+        el.addEventListener('contextmenu', function(e) {
+            this.myPile.push(selectedCard);
+            selectedCard.myPile = this.myPile;
+            console.log(selectedCard.classList, 'first');
+            selectedCard.classList.remove('selected-card');
+            console.log('this.myPile', this.myPile);
+            const myClass = this.getAttribute('myClass');
+            console.log('myClass', myClass);
+            selectedCard.setAttribute('myClass', myClass);
+            selectedCard.classList.add(myClass);
+            selectedCard = null;
+            this.myPile.forEach( (card, index)=> {
+               card.style.zIndex = index;
+               console.log('card.classList', card.classList);
+
+               console.log('card', card.style.zIndex)
+            });
+            console.log('card after', this.myPile);
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        })
+    });
+    const piles = [[]];
+    const root = document.documentElement;
+    root.addEventListener("mousemove", e => {
+        root.style.setProperty('--x', e.clientX + 20 + "px");
+        root.style.setProperty('--y', e.clientY + 20 +  "px");
+    });
+    window.addEventListener('contextmenu', function(e) {
+        console.log(selectedCard);
+        if (!selectedCard) {return}
+        piles.push([selectedCard]);
+
+        getSheet().insertRule(`.piles-${piles.length} { top: ${e.clientY}px; left: ${e.clientX}px; }`, getStyles().length);
+        selectedCard.classList.add(`piles-${piles.length}`);
+        selectedCard.setAttribute('myClass', `piles-${piles.length}`);
+        selectedCard.classList.remove('selected-card');
+        selectedCard.myPile = piles[piles.length -1];
+        selectedCard = null;
+        e.preventDefault();
+        e.stopPropagation();
+        return false;
+    });
+    function getStyle(className) {
+        var classes =  document.styleSheets[0].rules || document.styleSheets[0].cssRules;
+        for (var x = 0; x < classes.length; x++) {
+            console.log('selectorText',  classes[x]);
+            if (classes[x].selectorText === className) {
+                return classes[x];
+            }
+        }
+    }
+
+    function getStyles() {
+        return document.styleSheets[0].rules || document.styleSheets[0].cssRules;
+    }
+
+    function getSheet() {
+        console.log(document.styleSheets);
+        return  document.styleSheets[0];
+    }
+
+
+    function first(data, cb){
+        cb(data + '1,');
+        console.log("first()", data);
+    }
+    function second(data, cb) {
+        cb(data + '2,');
+        console.log("second()",data);
+    }
+    function third(data, cb) {
+        cb(data + '3,');
+        console.log("third()",data);
+    }
+    function last(data) {
+        console.log("last() ", data + '4');
+    }
+
+    first("", function (data) {
+        second(data, function (data){
+            third(data, function (data){
+                last(data);
+            }); // end third();
+        }); // end second();
+    });
 </script>
 </body>
 </html>
