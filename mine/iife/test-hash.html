@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    const page1 = document.createElement('div');
+    createHeader(page1, 'Home');
+    createLink(page1, '#about', 'About');
+    const page2 = document.createElement('div');
+    createHeader(page2, 'About');
+    createLink(page2, '#home', 'Home');
+
+    router = {
+        history: [],
+        routes: {
+            ['#home-1']: page1,
+            ['#home']: page1,
+            ['#about']: page2,
+        },
+        currentPage: null,
+        checkRoute: function checkRoute(route) {
+            if (this.currentPage) {
+                this.currentPage.remove();
+            }
+            if (this.routes[route]) {
+                document.body.appendChild(this.routes[route]);
+                this.history.push(route);
+                this.currentPage = this.routes[route];
+            } else {
+                window.location.hash = '#home';
+                this.checkRoute('#home');
+            }
+        }
+    };
+    router.checkRoute(window.location.hash);
+    window.onhashchange = function () {
+        router.checkRoute(window.location.hash);
+    };
+
+    function createHeader(parent, text) {
+        const h1 = document.createElement('h1');
+        const textEl = document.createElement('span');
+        textEl.addEventListener('mouseover', function() {
+            h1.style.color = 'red';
+        });
+        textEl.addEventListener('mouseout', function() {
+            h1.style.color = 'black';
+        });
+        textEl.innerText = text;
+        h1.appendChild(textEl);
+        parent.appendChild(h1);
+    }
+
+    function createLink(parent, link, text) {
+        const el = document.createElement('a');
+        el.setAttribute('href', link);
+        el.innerText = text;
+        parent.appendChild(el);
+    }
+
+    function createImageCarousel(parent, arrImages) {
+        const el = document.createElement('span');
+        el.style.display = 'flex';
+        el.style.position = 'relative';
+        const leftButton = document.createElement('button');
+        leftButton.innerText = '<';
+        const rightButton = document.createElement('button');
+        rightButton.innerText = '>';
+
+        let current = 0;
+        el.appendChild(leftButton);
+        leftButton.addEventListener('click', function () {
+            console.log('click');
+            current--;
+            if (current < 0) {
+                current = arrImages.length -1;
+            }
+            imgEl.src = arrImages[current];
+        });
+
+
+        rightButton.addEventListener('click', function () {
+            console.log('click', el);
+            current++;
+            if (current > arrImages.length -1) {
+                current = 0;
+            }
+            imgEl.src = arrImages[current];
+        });
+
+        const imgEl = document.createElement('img');
+        imgEl.src = arrImages[0];
+        imgEl.style.width = '300px';
+        imgEl.style.height = '180px';
+        el.appendChild(imgEl);
+
+        el.appendChild(rightButton);
+
+        parent.appendChild(el);
+    }
+
+    createImageCarousel(page1, ['https://avada.theme-fusion.com/veterinarian/wp-content/uploads/sites/80/2016/11/pets_big.png', 'https://d17fnq9dkz9hgj.cloudfront.net/uploads/2013/05/120251710-632x3531.jpg', 'https://static.lakana.com/mmm-global-us-east-1/photo/2018/08/06/dogs-cats-pets_1533585847599_12699611_ver1.0.gif']);
+    createImageCarousel(page2, ['https://media.wired.com/photos/59270b3ff3e2356fd800b471/2:1/w_2500,c_limit/DataAttackViralPets.jpg', 'https://www.thepostoakhotel.com/img/gallery/pets-lg.jpg', 'https://pv-web-01t.s3.amazonaws.com/wordpress/wp-content/uploads/2019/02/19-4302-Dental-Sm-Pet-2560x1370.jpg']);
+
+    console.log('this is the hash', window.location.hash);
+</script>
+</body>
+</html>

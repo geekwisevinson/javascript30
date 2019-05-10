@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iife</title>
+</head>
+<body>
+<script>
+    function createRequest(method, url) {
+        return new Promise(function (resolve, reject) {
+            const xhr = new XMLHttpRequest();
+            xhr.open(method, url);
+            xhr.onerror = function(error) {
+                console.log('error', error);
+                reject(error);
+            };
+            xhr.onprogress = function(progress) {
+                console.log('progress', progress);
+            };
+            xhr.onload = function(load) {
+                console.log('load', load);
+                resolve(xhr.responseText);
+            };
+            xhr.send();
+        });
+    }
+    // createRequest('GET', 'keep-elections.log').then(function (event) {
+    //     console.log('old', event);
+    //     const parsable = event.substring(event.indexOf('['));
+    //     console.log('parsable', parsable);
+    //     console.log('error@', parsable.substring(669));
+    //     console.log('event', JSON.parse(parsable));
+    // });
+
+    const page1 = document.createElement('div');
+    page1.innerHTML = '<div>home</div><a href="#about">about</a>';
+    const page2 = document.createElement('div');
+    page2.innerHTML = '<div>about</div><a href="#home">home</a>';
+
+    router = {
+        origin: '',
+        history: [],
+        routes: {
+            ['#home-1']: page1,
+            ['#home']: page1,
+            ['']: page1,
+            ['#about']: page2,
+        },
+        currentPage: null,
+        checkRoute: function checkRoute(route) {
+            if (this.currentPage) {
+                this.currentPage.remove();
+            }
+            if (this.routes[route]) {
+                document.body.appendChild(this.routes[route]);
+                this.history.push(route);
+                this.currentPage = this.routes[route];
+            } else {
+                window.location.href = this.origin + '#home';
+                this.checkRoute('#home');
+            }
+        }
+    };
+    router.origin = window.location.origin + window.location.pathname;
+    router.checkRoute(window.location.href.substring(origin.length));
+    console.log('test', window.location);
+    console.log('path', window.location.origin + window.location.pathname);
+    console.log('short-path', window.location.href.substring((window.location.origin + window.location.pathname).length));
+    window.onhashchange = function () {
+        router.checkRoute(window.location.href.substring((window.location.origin + window.location.pathname).length));
+    }
+
+    console.log('this is the hash', window.location.hash);
+</script>
+</body>
+</html>

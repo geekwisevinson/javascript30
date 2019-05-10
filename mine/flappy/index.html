@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        canvas {
+            border: 1px solid black;
+        }
+
+        img {
+            border: 1px solid black;
+        }
+
+    </style>
+</head>
+<body>
+<canvas width="360" height="640"></canvas>
+<img src="sprite.png" alt="">
+<div>
+    <img src="sprite.png" alt="">
+</div>
+
+<script>
+    const canvas = document.querySelector('canvas');
+    const img = document.querySelector('img');
+    const context = canvas.getContext('2d');
+
+    class Drawable {
+        x = 0;
+        y = 0;
+        w = 0;
+        h = 0;
+        s = {
+            x: 0,
+            y: 0,
+            w: 360,
+            h: 640,
+        };
+
+        constructor(x, y, w, h) {
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
+        }
+
+        draw() {
+            const t = this;
+            console.log('draw', t);
+            context.drawImage(img, t.s.x, t.s.y, t.s.w, t.s.h, t.x, t.y, t.w, t.h);
+        }
+
+        update() {
+            this.x--;
+            if (this.x <= -this.w) {
+                this.x = 360;
+            }
+        }
+    }
+
+    class Background extends Drawable {
+
+        constructor(x, y, w, h) {
+            super(x, y, w, h)
+        }
+    }
+
+    class Bird extends Drawable {
+        s = {
+            x: 361,
+            y: 81,
+            w: 80,
+            h: 70,
+        };
+        ySpeed = 0;
+        motion = 0;
+
+        constructor(x, y, w, h) {
+            super(x, y, w, h)
+        }
+
+        update() {
+            this.motion += .2;
+            this.y += this.ySpeed + this.motion;
+            if (this.y > 640 - this.h) {
+                this.y = 640 - this.h;
+            }
+
+            if (this.motion < 1) {
+                this.s.y = 150;
+            } else {
+                this.s.y = 81;
+            }
+        }
+
+        jump() {
+            this.ySpeed = -5;
+            this.motion = 0;
+        }
+    }
+
+    const bg = new Background(0, 0, 360, 640);
+    const bg2 = new Background(360, 0, 360, 640);
+    const bird = new Bird(80, 500, 80, 70);
+
+    function gameLoop() {
+        context.clearRect(0, 0, 360, 640);
+        bg.update();
+        bg2.update();
+        bird.update();
+        bg.draw();
+        bg2.draw();
+        bird.draw();
+        window.requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+
+    setInterval(function () {
+        bird.jump();
+    }, 1600)
+
+</script>
+
+</body>
+</html>
