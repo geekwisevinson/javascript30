@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Intro to Js</title>
+    <style>
+        .shake {
+            animation: shake 2s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        @keyframes shake {
+            10%, 90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%, 80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%, 50%, 70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%, 60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+    </style>
+</head>
+<body>
+<h1>Intro to JS</h1>
+<ul>
+    <li><input type="checkbox"> Comments
+        <ul>
+            <li>// line comment </li>
+            <li>/* block comment */</li>
+        </ul>
+    </li>
+    <li><input type="checkbox"> Document
+        <ul>
+            <li>write('something')</li>
+            <li>alert('something')</li>
+        </ul>
+    </li>
+    <li><input type="checkbox"> Variables
+        <ul>
+            <li>var</li>
+            <li>const</li>
+            <li>let</li>
+        </ul>
+        <ul>
+            <li>number</li>
+            <li>string</li>
+            <li>boolean</li>
+            <li>null</li>
+            <li>undefined</li>
+        </ul>
+        <ul>
+            <li>Object</li>
+            <li>Array</li>
+        </ul>
+    </li>
+    <li><input type="checkbox"> Operators
+        <ul>
+            <li>Assignment
+                <ul>
+                    <li>=</li>
+                </ul>
+            </li>
+            <li>Arithmetic
+                <ul>
+                    <li>+</li>
+                    <li>-</li>
+                    <li>*</li>
+                    <li>/</li>
+                    <li>%</li>
+                </ul>
+            </li>
+            <li>Comparison
+                <ul>
+                    <li>==</li>
+                    <li>===</li>
+                    <li>!=</li>
+                    <li>!==</li>
+                    <li> ></li>
+                    <li> <</li>
+                    <li> >=</li>
+                    <li> <=</li>
+                </ul>
+            </li>
+            <li>logical
+                <ul>
+                    <li>&&</li>
+                    <li>||</li>
+                    <li>!</li>
+                </ul>
+            </li>
+            <li>ternary
+                <ul>
+                    <li>
+                        (truthy condition) ? true execution : false execution
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>
+<div>
+    <input type="text">
+</div>
+
+
+<script>
+    // document.querySelectorAll('li').forEach( li => {
+    //     li.addEventListener('click', function () {
+    //         this.classList.add('shake');
+    //     });
+    //     li.addEventListener('animationend', function () {
+    //         this.classList.remove('shake');
+    //         console.log('end')
+    //     });
+    // });
+    setTimeout(()=> {
+        console.log(document.querySelector('div').childNodes[1].value);
+    }, 3000);
+
+</script>
+</body>
+</html>

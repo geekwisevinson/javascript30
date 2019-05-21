@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" style="background-color: red">
+<head >
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        * {
+            border: 1px solid black;
+        }
+
+    </style>
+</head>
+<body style=" background-color: blue;">
+    <h1 style="background-color: yellow">
+       my h1
+    </h1>
+    <p style="background-color: yellow">my p</p>
+    <ul style="background-color: yellow">my ul<li style="background-color: yellow">my li</li></ul>
+    <button style="background-color: yellow" onclick="createCopy()">my button</button>
+    <script>
+
+
+
+        function createCopy() {
+            const myH1 = document.createElement('h1');
+            document.body.appendChild(myH1);
+            myH1.style.backgroundColor = 'yellow';
+            myH1.innerText = 'my h1';
+
+            const myP = document.createElement('p');
+            document.body.appendChild(myP);
+            myP.style.backgroundColor = 'yellow';
+            myP.innerText = 'my p';
+
+            const myUl = document.createElement('ul');
+            document.body.appendChild(myUl);
+            myUl.style.backgroundColor = 'yellow';
+            myUl.innerText = 'my ul';
+
+            const myLi = document.createElement('li');
+            myUl.appendChild(myLi);
+            myUl.style.backgroundColor = 'yellow';
+            myLi.innerText = 'my li';
+
+            const myButton = document.createElement('button');
+            myButton.innerText = 'my button';
+            myButton.style.backgroundColor = 'yellow';
+            document.body.appendChild(myButton);
+            myButton.addEventListener('click', function () {
+                createCopy();
+            });
+            myH1.addEventListener('mouseover', function () {
+               myH1.innerText = 'You hovered over me, man!';
+               myP.innerText = 'You hovered over my h1, man!';
+            });
+        }
+
+    </script>
+</body>
+</html>
