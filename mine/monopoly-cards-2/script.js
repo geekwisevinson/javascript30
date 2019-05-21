@@ -1,3 +1,5 @@
+//region Const
+const state = {};
 const moneyCards = [
     [6, '1M', 'money'],
     [5, '2M'],
@@ -48,12 +50,18 @@ const propertyWildCards = [
     [2, 'Red/Yellow'],
     [2, 'Multi-Color']
 ];
+//endregion
+
+
+//region Let
 let selectedCard = null;
-
 let holdingPile = null;
+let mode = 0;
+//endregion
 
-function createCards() {
-    const cards = moneyCards.concat(actionCards, rentCards, propertyCards, propertyWildCards);
+
+//region Function createCards
+function createCards(cards) {
     let type;
     return cards.map((cardConfig) => {
         const tempCards = [];
@@ -83,25 +91,15 @@ function createCards() {
         return el;
     });
 }
+//endregion
 
-
-function addListeners(el) {
+function addListeners(el){
     el.addEventListener('click', function (e) {
-        holdingPile = [el];
-        el.setAttribute('holding', 'true');
-    });
-    el.addEventListener('dblclick', function (e) {
-        const pileClass = el.getAttribute('deck');
-        holdingPile = [document.querySelectorAll(`[deck=${pileClass}]`)];
-        console.log('holdingPile', pileClass)
-        holdingPile.forEach( card => {
-            if (!card) {
 
-            }
-            console.log(card);
-            el.setAttribute('holding', 'true');
-        })
-    });
+    })
 }
 
-console.log('cards', createCards());
+
+
+
+console.log('cards', createCards(moneyCards.concat(actionCards, rentCards, propertyCards, propertyWildCards)));
